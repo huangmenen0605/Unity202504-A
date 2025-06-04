@@ -44,6 +44,9 @@ public class NPC : MonoBehaviour
     private void OnInteractActionPerformed(InputAction.CallbackContext obj)
     {
         Debug.Log($"NPC 互動鍵按下");
+        
+        if (dialog.IsInDialog()) return;
+        
         if (characterInTrigger)
         {
             StartDialog();

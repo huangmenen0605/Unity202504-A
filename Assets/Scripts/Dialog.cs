@@ -25,6 +25,12 @@ public class Dialog : MonoBehaviour
         nextDialogHint.gameObject.SetActive(false);
         tmpWriter.OnFinishWriter.AddListener(OnFinishWriter);
         tmpWriter.OnStartWriter.AddListener(OnStartWriter);
+        //var interactAction = playerInput.actions.FindAction("Interact");
+        //interactAction.performed += InteractActionOnperformed;
+    }
+
+    private void OnEnable()
+    {
         var interactAction = playerInput.actions.FindAction("Interact");
         interactAction.performed += InteractActionOnperformed;
     }
@@ -53,6 +59,8 @@ public class Dialog : MonoBehaviour
         // 如果對話完畢(最後一段話)，而且打字機效果結束，則關閉對話框
         if (dialogIndex + 1 == dialogTexts.Count && tmpWriter.IsWriting == false)
         {
+            isInDialog = false;
+            characterController.SetCanMoving(true);
             CloseDialog();
             return;
         }
@@ -84,6 +92,7 @@ public class Dialog : MonoBehaviour
     private void CloseDialog()
     {
         gameObject.SetActive(false);
+        isInDialog = false;
     }
 
     /// <summary>
@@ -105,10 +114,16 @@ public class Dialog : MonoBehaviour
     {
         // 如果沒有任何對話，不做任何事情
         if (dialogTexts.Count == 0) return;
+        isInDialog = true;
         dialogIndex = 0; // 重置Index
         SetText(dialogTexts[dialogIndex]);
         PlayWriter();
+        characterController.SetCanMoving(false);
+        
     }
+
+    [SerializeField]
+    private CharacterController characterController;
 
     [Button("執行打字機效果")]
     public void PlayWriter()
@@ -126,4 +141,12 @@ public class Dialog : MonoBehaviour
     {
         tmpWriter.SetText(dialogText);
     }
+    
+    private bool isInDialog;
+
+    public bool IsInDialog()
+    {
+        return isInDialog;
+    }
+
 }
